@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Završetak testa</mat-card-title>
+    <mat-list *ngIf="odgovori">
+      <mat-list-item *ngFor="let odg of odgovori; let i = index">{{i+1}}. {{odg.odgovor}}</mat-list-item>
+    </mat-list>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-raised-button color="accent" (click)="zavrsi()">Završi test</a>
+  </mat-card-actions>
+</mat-card>

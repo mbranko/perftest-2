@@ -1,0 +1,18 @@
+<mat-card *ngIf="pitanje">
+  <mat-card-content>
+    <mat-card-title>Pitanje {{pitanje.redni_broj}}</mat-card-title>
+    <p>
+      {{pitanje.tekst}}
+    </p>
+    <form [formGroup]="formGroup">
+      <mat-radio-group formControlName="odgovor" aria-label="Izaberite odgovor" class="answer-group" [required]="true">
+        <mat-radio-button *ngFor="let odg of pitanje.odgovor_set" value="{{odg.redni_broj}}">{{odg.tekst}}</mat-radio-button>
+      </mat-radio-group>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-raised-button color="primary" (click)="prethodno()" *ngIf="redniBroj != 1">Prethodno pitanje</a>
+    <a mat-raised-button color="accent" (click)="sledece()" *ngIf="redniBroj != 20">Sledeće pitanje</a>
+    <a mat-raised-button color="accent" (click)="zavrsi()" *ngIf="redniBroj == 20">Završi test</a>
+  </mat-card-actions>
+</mat-card>

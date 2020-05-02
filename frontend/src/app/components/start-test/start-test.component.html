@@ -1,0 +1,11 @@
+<mat-card *ngIf="test">
+  <mat-card-content>
+    <mat-card-title>{{test.naziv}}</mat-card-title>
+    <p>
+      Datum testa: {{test.datum_vazenja|date:'dd.MM.yyyy.'}}
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-raised-button color="accent" (click)="pocni()">Započni</a>
+  </mat-card-actions>
+</mat-card>
