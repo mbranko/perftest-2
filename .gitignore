@@ -132,4 +132,4 @@ dmypy.json
 *.log
 node_modules/
 frontend/dist/
-
+.DS_Store

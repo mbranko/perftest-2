@@ -6,14 +6,12 @@ DEBUG = False
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.postgresql',
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',  # 'ENGINE': 'django.db.backends.mysql',
         'NAME': get_variable('POSTGRES_DBNAME', 'malamatura'),
         'USER': get_variable('POSTGRES_USER', 'malamatura'),
         'PASSWORD': get_variable('POSTGRES_PASSWORD', 'malamatura'),
         'HOST': get_variable('POSTGRES_HOST', 'malamaturadb'),
         'PORT': get_variable('POSTGRES_PORT', ''),
-        # 'ATOMIC_REQUESTS': True,  # opseg transakcije = HTTP zahtev
     }
 }
 

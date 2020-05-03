@@ -9,7 +9,6 @@ app_name = 'pitanja'
 urlpatterns = [
     path('testovi/', cache_page(60*60)(TestList.as_view())),
     path('testovi/<int:pk>/', cache_page(60*60)(TestDetail.as_view())),
-    # path('testovi/<int:pk>/', test),
     path('pitanja/', cache_page(60*60)(PitanjeList.as_view())),
     path('pitanja/<int:pk>/', cache_page(60*60)(PitanjeDetail.as_view())),
     path('odgovori/', OdgovorList.as_view()),

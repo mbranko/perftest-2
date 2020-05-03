@@ -1,10 +1,12 @@
-# Primer webshop aplikacije: SPA, REST, Docker
+# Primer aplikacije za ispitivanje performansi
 
 ## Potrebne stvari
 
 * Python
 * Django
-* Docker
+* uWSGI
+* Nginx
+* Angular
 
 ## Podešavanje za razvoj
 
@@ -43,39 +45,39 @@ cd frontend
 ng serve
 ```
 
-Tokom razvoja frontend aplikacije je dostupan na adresi http://localhost:4200/. Zahtevi koji se upućuju
-backendu će biti proksirani kroz Angular server.
+Tokom razvoja frontend aplikacije je dostupan na adresi http://localhost:4200/. 
+Zahtevi koji se upućuju backendu će biti proksirani kroz Angular server.
 
-## Kreiranje image-a za produkciju
+## Pokretanje u produkciji
 
-Postaviti se u direktorijum gde stoji fajl `Dockerfile`.
+**Server #1** izvršava [Nginx](https://www.nginx.com/). Primer konfiguracije za
+Nginx je dat u fajlu `backend/config/nginx.conf`. Deklaracija `upstream`
+definiše listu backend servera. Deklaracija `location` određuje kako će se
+opsluživati pojedine vrste zahteva. U našem primeru postoje dve `location`
+deklaracije: prva definiše prosleđivanje svih zahteva čiji URL počinje sa
+`/api` na backend servere, a druga će obraditi sve preostale zahteve
+serviranjem fajlova za frontend.
 
-Kreiranje Docker image-a:
+**Server #2** izvršava sistem za upravljanje bazama podataka. U našem primeru
+lako je izabrati između PostgreSQL i MySQL sistema - izbor se vrši u
+konfiguraciji aplikacije date u `backend/malamatura/app_settings/prod.py`.
+Ako će bazi podataka pristupati backend serveri sa različitih mašina, potrebno
+je obezbediti da oni mogu da joj pristupe - otvoriti firewall za port 5432
+(PostgreSQL) odnosno 3306 (MySQL) za adrese backend servera. U konfiguraciji
+baze potrebno je i podesiti da server baze podataka sluša na svim interfejsima
+(`listen = '*'` ili `0.0.0.0` umesto `127.0.0.1`).
+
+**Backend serveri** bi trebalo da imaju instaliran Python, definisano virtuelno
+okruženje, u njemu instalirane sve potrebne biblioteke (kao i za razvoj), i
+pokrenut backend server pomoću:
 ```bash
-docker build -t malamatura:latest .
-docker tag malamatura:latest brankomilosavljevic/malamatura:latest
-docker push brankomilosavljevic/malamatura:latest
+cd backend
+uwsgi --config config/uwsgi-test.ini
 ```
 
-Pokretanje PostgreSQL baze:
+Pre pokretanja backend servera pomoću par promenljivih okruženja potrebno je
+definisati da se radi o produkcionom serveru i adresu na kojoj se nalazi SUBP.
 ```bash
-docker run --name malamaturadb -e POSTGRES_USER=malamatura -e POSTGRES_PASSWORD=malamatura -d postgres:12.2
+export DJANGO_SETTINGS=prod
+export POSTGRES_HOST=1.2.3.4
 ```
-
-Pokretanje aplikacije:
-```bash
-docker run \
-  --name malamatura \
-  -p 8000:8000 \
-  --link malamaturadb \
-  -v `pwd`/malamatura.log:/app/log/malamatura.log \
-  -v `pwd`/uwsgi.log:/app/log/uwsgi.log \
-  --detach \
-  malamatura:latest
-```
-
-Ili ako cemo da zabranimo da se isti test radi vise puta:
-```bash
-docker run --name malamatura -e ALLOW_REPEATED_TESTS=False -p 8000:8000 --link malamaturadb -d malamatura:latest
-```
-
