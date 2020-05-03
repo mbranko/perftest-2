@@ -81,3 +81,27 @@ definisati da se radi o produkcionom serveru i adresu na kojoj se nalazi SUBP.
 export DJANGO_SETTINGS=prod
 export POSTGRES_HOST=1.2.3.4
 ```
+
+## Pokretanje testova
+
+Za pokretanje testova performansi koristićemo biblioteku 
+[Locust](https//www.locust.io). Skript koji definiše ponašanje jednog korisnika
+sistema je dat u `loadtest/locustfile.py`. Pokretanje testa je najbolje uraditi
+na posebnoj mašini (različitoj od servera). Za pokretanje je zgodno koristiti
+gotov Docker image za Locust:
+```bash
+cd loadtest
+docker run \
+  -p 8089:8089 \
+  -p 5557:5557 \
+  -v $(pwd)/locustfile.py:/locustfile.py \
+  -e TARGET_URL=http://116.203.220.167 \
+  --rm \
+  locustio/locust
+```
+
+Pokrenut server za izvršavanje testa ima svoj web interfejs na portu 8089, a 
+na portu 5557 će osluškivati slave servere ukoliko postoje. Nakon pokretanja
+servera za izvršavanje testa potrebno je otvoriti browser na njegovoj adresi
+i portu 8089, i odatle definisati broj korisnika koji se simulira i pokrenuti
+test.
